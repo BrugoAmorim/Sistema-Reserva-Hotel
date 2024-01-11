@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Api.Controllers
 {
@@ -10,15 +11,24 @@ namespace Api.Controllers
     [Route("[controller]")]
     public class ClientesController : ControllerBase
     {
+        Business.ClientesBusiness validar = new Business.ClientesBusiness();
+        Utils.ClienteUtils conversor = new Utils.ClienteUtils();
+
         [HttpGet("buscar/{idcliente}")]
-        public Models.Response.ClienteResponse get_cliente(int idcliente){
+        public ActionResult<Models.Response.ClienteResponse> get_cliente(int idcliente){
 
-            Models.DbhospedariaContext ctx = new Models.DbhospedariaContext();
-            Utils.ClienteUtils conversor = new Utils.ClienteUtils();
+            try{
+                Models.TbCliente bruto = validar.ValidargetCliente(idcliente);
+                Models.Response.ClienteResponse res = conversor.converToRes(bruto);
 
-            Models.Response.ClienteResponse caixa = conversor.converToRes(ctx.TbClientes.First(x => x.IdCliente == idcliente));
+                return res;
+            }
+            catch(System.Exception ex){
 
-            return caixa;
+                return new BadRequestObjectResult(
+                    new Models.ErrorResponse(ex.Message, 404)
+                );
+            }
         }
     }
 }
