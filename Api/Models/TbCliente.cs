@@ -15,7 +15,7 @@ public partial class TbCliente
 
     public string DsEmail { get; set; }
 
-    public DateOnly DtNascimento { get; set; }
+    public DateTime DtNascimento { get; set; }
 
     public string DsNacionalidade { get; set; } = null!;
 

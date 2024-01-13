@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Api.Models.Response
+namespace Api.Models.Request
 {
-    public class ClienteResponse
+    public class ClienteRequest
     {
-        public int idcliente { get; set; }
         public string nome { get; set; }
         public string cpf { get; set; }
         public string celular { get; set; }

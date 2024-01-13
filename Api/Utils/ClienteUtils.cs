@@ -20,5 +20,18 @@ namespace Api.Utils
         
             return clt;
         }
+
+        public Models.TbCliente converToTable(Models.Request.ClienteRequest req){
+
+            Models.TbCliente modelTb = new Models.TbCliente();
+            modelTb.NmCliente = req.nome;
+            modelTb.DsCpf = req.cpf;
+            modelTb.NrCelular = req.celular;
+            modelTb.DsEmail = req.email;
+            modelTb.DtNascimento = req.datanascimento;
+            modelTb.DsNacionalidade = req.nacionalidade;
+
+            return modelTb;
+        }
     }
 }

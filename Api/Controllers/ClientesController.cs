@@ -30,5 +30,14 @@ namespace Api.Controllers
                 );
             }
         }
+
+        [HttpPost("novo")]
+        public Models.Response.ClienteResponse post_newCliente(Models.Request.ClienteRequest req){
+
+            Models.TbCliente bruto = validar.ValidarpostCliente(req);
+            Models.Response.ClienteResponse res = conversor.converToRes(bruto);
+
+            return res;
+        }
     }
 }
