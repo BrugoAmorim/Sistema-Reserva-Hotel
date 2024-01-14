@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Api.Models;
 
-public partial class TbCliente
+public partial class TbCliente 
 {
     public int IdCliente { get; set; }
 
