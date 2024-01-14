@@ -14,40 +14,24 @@ namespace Api.Controllers
     [Route("[controller]")]
     public class HospedagemController : ControllerBase
     {
+        Business.ReservarBusiness validar = new Business.ReservarBusiness();
+        Utils.HospedagemUtils conversor = new Utils.HospedagemUtils();
+
         [HttpPost("reservar/{idquarto}")]
-        public Models.TbClienteHospedagem post_Reservarhospedagem(Models.Request.ClientenoRegRequest req, int idquarto){
+        public ActionResult<Models.Response.ReservaHotelResponse> post_Reservarhospedagem(Models.Request.ClientenoRegRequest req, int idquarto){
 
-            Models.DbhospedariaContext ctx = new Models.DbhospedariaContext();
-            Business.ClientesBusiness validarcliente = new Business.ClientesBusiness();
-            
-            Models.TbClienteHospedagem hospedagem = new Models.TbClienteHospedagem();
-        
-            Models.TbQuarto quartoinfo = ctx.TbQuartos.FirstOrDefault(x => x.IdQuarto == idquarto);
-            
-            Models.TbClienteHospedagem host = ctx.TbClienteHospedagems
-                                                 .Where(x => x.IdQuarto == idquarto)
-                                                 .OrderBy(x => x.DtEstadia)
-                                                 .LastOrDefault();
+            try{
+                Models.TbClienteHospedagem reserva = validar.ValidarpostReservar(req, idquarto);
+                Models.Response.ReservaHotelResponse caixote = conversor.convertToRes(reserva);
 
-            if(idquarto <= 0 || quartoinfo == null)
-                throw new ArgumentException("Quarto não encontrado");
-
-            if(host != null){
-                if(host.DtEstadia.AddDays(host.QtdDias + 2) >= req.estadia)            
-                    throw new ArgumentException("Este quarto não vai estar disponivel nessa data");
+                return caixote;
             }
+            catch(System.Exception ex){
 
-            Models.TbCliente novoClt = validarcliente.ValidarpostCliente(req.dadosCliente);
-
-            hospedagem.IdQuarto = idquarto;
-            hospedagem.IdCliente = novoClt.IdCliente;
-            hospedagem.DtEstadia = req.estadia;
-            hospedagem.QtdDias = req.qtdDias;
-
-            ctx.TbClienteHospedagems.Add(hospedagem);
-            ctx.SaveChanges();
-
-            return hospedagem;
+                return new BadRequestObjectResult(
+                    new Models.ErrorResponse(ex.Message, 404)
+                );
+            }
         }
 
         [HttpPost("agendar/{idcliente}/{idquarto}")]
