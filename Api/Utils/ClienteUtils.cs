@@ -24,7 +24,7 @@ namespace Api.Utils
         public Models.TbCliente converToTable(Models.Request.ClienteRequest req){
 
             Models.TbCliente modelTb = new Models.TbCliente();
-            modelTb.NmCliente = req.nome;
+            modelTb.NmCliente = req.nome.Trim();
             modelTb.DsCpf = req.cpf;
             modelTb.NrCelular = req.celular;
             modelTb.DsEmail = req.email;

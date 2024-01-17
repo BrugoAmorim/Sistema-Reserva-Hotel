@@ -34,10 +34,26 @@ namespace Api.Controllers
             }
         }
 
-        [HttpPost("agendar/{idcliente}/{idquarto}")]
-        public void post_Agendarhospedagem(){
+        [HttpPost("agendar/{idquarto}")]
+        public Models.TbClienteHospedagem post_Agendarhospedagem(Models.Request.ClienteRegRequest req, int idquarto){
 
+            Models.DbhospedariaContext ctx = new Models.DbhospedariaContext();
 
+            Models.TbCliente getClt = ctx.TbClientes.FirstOrDefault(x => x.NmCliente == req.nomeCliente.Trim() && x.DsCpf == req.cpfCliente.Trim());            
+
+            if(getClt == null)
+                throw new ArgumentException("Os dados deste cliente não foram encontrados");
+
+            Models.TbClienteHospedagem novaReserva = new Models.TbClienteHospedagem();
+            novaReserva.DtEstadia = req.estadia;
+            novaReserva.IdQuarto = idquarto;
+            novaReserva.QtdDias = req.qtdDias;
+            novaReserva.IdCliente = getClt.IdCliente;
+
+            ctx.TbClienteHospedagems.Add(novaReserva);
+            ctx.SaveChanges();
+
+            return novaReserva;
         }
     }
 }
