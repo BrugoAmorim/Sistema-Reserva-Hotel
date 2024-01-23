@@ -8,6 +8,7 @@ namespace Api.Database
 {
     public class ReservasHotelDatabase
     {
+        Utils.HospedagemUtils conversor = new Utils.HospedagemUtils();
         Models.DbhospedariaContext ctx = new Models.DbhospedariaContext();
     
         public Models.TbQuarto get_quarto(int idquarto){
@@ -31,16 +32,20 @@ namespace Api.Database
 
         public Models.TbClienteHospedagem post_reservar(Models.TbCliente novoClt, DateTime estadia, int qtdDias, int idquarto){
         
-            Models.TbClienteHospedagem hospedagem = new Models.TbClienteHospedagem();
-            hospedagem.IdQuarto = idquarto;
-            hospedagem.IdCliente = novoClt.IdCliente;
-            hospedagem.DtEstadia = estadia;
-            hospedagem.QtdDias = qtdDias;
-
+            Models.TbClienteHospedagem hospedagem = conversor.convertCltNoReqToTb(novoClt, idquarto, estadia, qtdDias);
             ctx.TbClienteHospedagems.Add(hospedagem);
             ctx.SaveChanges();
 
             return get_reserva(hospedagem.IdClienteHospedagem);
+        }
+
+        public Models.TbClienteHospedagem post_agendar(Models.Request.ClienteRegRequest req, int idroom, int idcliente){
+
+            Models.TbClienteHospedagem newhost = conversor.convertCltReqToTb(req, idroom, idcliente);
+            ctx.TbClienteHospedagems.Add(newhost);
+            ctx.SaveChanges();
+
+            return get_reserva(newhost.IdClienteHospedagem);
         }
     }
 }

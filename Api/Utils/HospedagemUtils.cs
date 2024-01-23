@@ -27,6 +27,29 @@ namespace Api.Utils
 
             res.cliente = cliente;
             return res;
-        } 
+        }
+
+        public Models.TbClienteHospedagem convertCltReqToTb(Models.Request.ClienteRegRequest req, int idroom, int idcliente){
+
+            Models.TbClienteHospedagem host = new Models.TbClienteHospedagem();
+            host.DtEstadia = req.estadia;
+            host.QtdDias = req.qtdDias;
+            host.IdCliente = idcliente;
+            host.IdQuarto = idroom;
+
+            return host;
+        }
+
+        public Models.TbClienteHospedagem convertCltNoReqToTb(Models.TbCliente cliente, int idroom, DateTime estadia, int qtdDias){
+
+            Models.TbClienteHospedagem host = new Models.TbClienteHospedagem();
+            host.DtEstadia = estadia;
+            host.QtdDias = qtdDias;
+            host.IdCliente = cliente.IdCliente;
+            host.IdQuarto = idroom;
+
+            return host;
+        }
+
     }
 }

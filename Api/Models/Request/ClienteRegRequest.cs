@@ -9,7 +9,6 @@ namespace Api.Models.Request
     {
         public string nomeCliente { get; set; }
         public string cpfCliente { get; set; }
-        public int idquarto { get; set; }
         public int qtdDias { get; set; }
         public DateTime estadia { get; set; }
     }

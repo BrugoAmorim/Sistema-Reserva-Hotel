@@ -35,25 +35,20 @@ namespace Api.Controllers
         }
 
         [HttpPost("agendar/{idquarto}")]
-        public Models.TbClienteHospedagem post_Agendarhospedagem(Models.Request.ClienteRegRequest req, int idquarto){
+        public ActionResult<Models.Response.ReservaHotelResponse> post_Agendarhospedagem(Models.Request.ClienteRegRequest req, int idquarto){
 
-            Models.DbhospedariaContext ctx = new Models.DbhospedariaContext();
+            try{
+                Models.TbClienteHospedagem bruto = validar.ValidarpostAgendar(req, idquarto);
+                Models.Response.ReservaHotelResponse caixote = conversor.convertToRes(bruto);
 
-            Models.TbCliente getClt = ctx.TbClientes.FirstOrDefault(x => x.NmCliente == req.nomeCliente.Trim() && x.DsCpf == req.cpfCliente.Trim());            
+                return caixote;
+            }
+            catch(System.Exception ex){
 
-            if(getClt == null)
-                throw new ArgumentException("Os dados deste cliente não foram encontrados");
-
-            Models.TbClienteHospedagem novaReserva = new Models.TbClienteHospedagem();
-            novaReserva.DtEstadia = req.estadia;
-            novaReserva.IdQuarto = idquarto;
-            novaReserva.QtdDias = req.qtdDias;
-            novaReserva.IdCliente = getClt.IdCliente;
-
-            ctx.TbClienteHospedagems.Add(novaReserva);
-            ctx.SaveChanges();
-
-            return novaReserva;
+                return new BadRequestObjectResult(
+                    new Models.ErrorResponse(ex.Message, 404)
+                );
+            }
         }
     }
 }
