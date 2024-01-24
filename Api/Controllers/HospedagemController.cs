@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api.Controllers
 {
@@ -49,6 +50,26 @@ namespace Api.Controllers
                     new Models.ErrorResponse(ex.Message, 404)
                 );
             }
+        }
+
+        [HttpGet("dataDisp/{idquarto}")]
+        public Models.Response.QuartoDisponivelResponse get_DataDisponivel(int idquarto){
+
+            Models.DbhospedariaContext ctx = new Models.DbhospedariaContext();
+            Models.TbClienteHospedagem getRoom = ctx.TbClienteHospedagems.Include(x => x.IdQuartoNavigation)
+                                                                         .Where(x => x.IdQuarto == idquarto)
+                                                                         .OrderBy(x => x.DtEstadia)
+                                                                         .LastOrDefault();
+
+            int idhosp = getRoom.IdQuartoNavigation.IdHospedagem;
+
+            Models.Response.QuartoDisponivelResponse qt = new Models.Response.QuartoDisponivelResponse();
+            qt.idquarto = getRoom.IdQuarto;
+            qt.numero = getRoom.IdQuartoNavigation.NrQuarto;
+            qt.tipo = ctx.TbHospedagems.First(x => x.IdHospedagem == idhosp).DsTipoHospedagem;
+            qt.disponivelEm = getRoom.DtEstadia.AddDays(getRoom.QtdDias + 2);
+
+            return qt;
         }
     }
 }
